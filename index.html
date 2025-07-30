@@ -385,10 +385,15 @@
                                 data-key="venue-capacity-number">150 Gäste</span></p>
                     </div>
                 </div>
-                <div class="rounded-lg h-64 flex items-center justify-center shadow-lg"
-                    style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
-                    <p class="text-white font-medium" data-key="venue-photo-placeholder">Foto des Veranstaltungsortes
-                    </p>
+                <div class="rounded-lg h-64 overflow-hidden shadow-lg hover-lift transition-all duration-300">
+                    <img src="assets/images/location.jpg" alt="Kvareli Lake Resort" 
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                         style="display: none;"
+                         onload="this.style.display='block';">
+                    <div class="w-full h-full flex items-center justify-center"
+                         style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <p class="text-white font-medium" data-key="venue-photo-placeholder">Foto des Veranstaltungsortes</p>
+                    </div>
                 </div>
             </div>
         </div>
