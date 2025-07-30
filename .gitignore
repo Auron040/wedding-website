@@ -1,3 +1,27 @@
+# Python
+app.py
+requirements.txt
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Local server files
+run-server.bat
+share-online.bat
+
+# Documentation (local development only)
+SERVER-ANLEITUNG.md
+BILDER-ANLEITUNG.md
+INTERNET-ZUGRIFF.md
+netlify-upload.md
+
 # Dependencies
 node_modules/
 npm-debug.log*
@@ -27,3 +51,7 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Temporary files
+*.tmp
+*.temp
