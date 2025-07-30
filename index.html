@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'flip': 'flip 1s ease-in-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        },
+                        flip: {
+                            '0%': { transform: 'rotateY(0deg)' },
+                            '50%': { transform: 'rotateY(90deg)' },
+                            '100%': { transform: 'rotateY(0deg)' }
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Noto+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .font-sans {
+            font-family: 'Montserrat', 'Noto Sans', sans-serif;
+        }
+
+        :root {
+            --sage-green: #9CAF88;
+            --forest-green: #6B8E5A;
+            --silver: #C0C0C0;
+            --warm-silver: #E8E8E8;
+            --cream: #FAF9F6;
+            --charcoal: #2F2F2F;
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .shimmer-bg {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .portrait-container {
+            perspective: 1000px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .portrait-flip {
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease-in-out;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: 50%;
+        }
+
+        .portrait-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 50%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .portrait-back {
+            transform: rotateY(180deg);
+        }
+
+        .portrait-container:hover .portrait-side {
+            border-radius: 50% !important;
+        }
+    </style>
+</head>
+
+<body class="font-sans" style="background-color: var(--cream); color: var(--charcoal);">
+    <!-- Language Switcher -->
+    <div class="fixed top-4 right-4 z-50">
+        <div class="rounded-lg shadow-lg p-2 flex gap-2"
+            style="background-color: var(--warm-silver); backdrop-filter: blur(10px);">
+            <button id="lang-de" class="px-3 py-1 rounded text-sm font-medium transition-colors">DE</button>
+            <button id="lang-ru" class="px-3 py-1 rounded text-sm font-medium transition-colors">RU</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat relative"
+        style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('assets/images/hero-background.png');">
+        <div class="text-center px-4 relative z-10 animate-fade-in">
+            <h1 class="font-serif text-6xl md:text-8xl mb-4 font-light tracking-wide animate-slide-up"
+                style="color: var(--charcoal); text-shadow: 2px 2px 4px rgba(192, 192, 192, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);"
+                data-key="bride-groom-names">Fabian &
+                Anastasia</h1>
+
+            <!-- Countdown Timer -->
+            <div class="mb-8 animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="grid grid-cols-4 gap-3 md:gap-4 max-w-md mx-auto mb-4">
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-days">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-days">Tage</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.1s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-hours">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-hours">Stunden</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.2s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-minutes">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-minutes">Minuten</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.3s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-seconds">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-seconds">Sekunden</div>
+                    </div>
+                </div>
+                <p class="text-sm font-semibold opacity-90 animate-bounce-slow" style="color: var(--charcoal); text-shadow: 1px 1px 2px rgba(192, 192, 192, 0.6);" data-key="countdown-until">bis zur Hochzeit</p>
+            </div>
+
+            <p class="text-xl md:text-2xl font-semibold mb-8 animate-slide-up" style="animation-delay: 0.4s; color: var(--charcoal); text-shadow: 1px 1px 2px rgba(192, 192, 192, 0.6);" data-key="wedding-date">19. September 2026</p>
+            <p class="text-lg font-medium mb-8 animate-slide-up" style="animation-delay: 0.6s; color: var(--charcoal); text-shadow: 1px 1px 2px rgba(192, 192, 192, 0.6);" data-key="invitation-text">Wir laden dich
+                herzlich zu unserer Hochzeit ein</p>
+
+            <!-- Couple Photos -->
+            <div class="flex justify-center items-end gap-12 md:gap-16 mt-8 animate-slide-up" style="animation-delay: 0.8s;">
+                <div class="text-center group">
+                    <div class="portrait-container w-28 h-28 md:w-36 md:h-36 shadow-2xl border-4 border-opacity-50 hover-lift group-hover:scale-110 transition-all duration-500 animate-float cursor-pointer"
+                         style="border-color: var(--silver);">
+                        <div id="fabian-flip" class="portrait-flip">
+                            <!-- Fabian Child Photo (Front) -->
+                            <div class="portrait-side" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/fabian-child.jpg" alt="Fabian als Kind" class="w-full h-full object-cover"
+                                    style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="fabian-child">Fabian Kind</p>
+                                </div>
+                            </div>
+                            <!-- Fabian Adult Photo (Back) -->
+                            <div class="portrait-side portrait-back" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/fabian-adult.jpg" alt="Fabian als Erwachsener" class="w-full h-full object-cover"
+                                    style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="fabian-adult">Fabian</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center group">
+                    <div class="portrait-container w-28 h-28 md:w-36 md:h-36 shadow-2xl border-4 border-opacity-50 hover-lift group-hover:scale-110 transition-all duration-500 animate-float cursor-pointer"
+                         style="animation-delay: 1s; border-color: var(--silver);">
+                        <div id="anastasia-flip" class="portrait-flip">
+                            <!-- Anastasia Child Photo (Front) -->
+                            <div class="portrait-side" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/anastasia-child.jpg" alt="Anastasia als Kind" class="w-full h-full object-cover"
+                                    style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="anastasia-child">Anastasia Kind</p>
+                                </div>
+                            </div>
+                            <!-- Anastasia Adult Photo (Back) -->
+                            <div class="portrait-side portrait-back" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/anastasia-adult.jpg" alt="Anastasia als Erwachsene" class="w-full h-full object-cover"
+                                    style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="anastasia-adult">Anastasia</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quote Section -->
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--cream), var(--warm-silver));">
+        <div class="max-w-3xl mx-auto text-center">
+            <blockquote class="font-serif text-2xl md:text-3xl font-light italic mb-6"
+                style="color: var(--forest-green);" data-key="wedding-quote">
+                "Die Liebe ist das einzige, was wächst, wenn wir es teilen."
+            </blockquote>
+            <cite class="text-lg" style="color: var(--sage-green);" data-key="quote-author">— Antoine de
+                Saint-Exupéry</cite>
+        </div>
+    </section>
+
+    <!-- Event Details -->
+    <section class="py-16 px-4 relative overflow-hidden" style="background: linear-gradient(135deg, var(--cream), white);">
+        <!-- Decorative Elements -->
+        <div class="absolute top-0 left-0 w-32 h-32 rounded-full opacity-10 animate-float" style="background: var(--sage-green);"></div>
+        <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full opacity-10 animate-float" style="background: var(--forest-green); animation-delay: 2s;"></div>
+        
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h2 class="font-serif text-4xl text-center mb-12 font-medium animate-fade-in" style="color: var(--forest-green);"
+                data-key="event-details">Veranstaltungsdetails</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Ceremony -->
+                <div class="group hover-lift rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-white border-opacity-50 backdrop-blur-sm animate-slide-up"
+                    style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(232,232,232,0.8));">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-full mr-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" 
+                             style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-serif text-2xl font-medium group-hover:text-opacity-80 transition-all duration-300" style="color: var(--sage-green);"
+                            data-key="ceremony">Trauung</h3>
+                    </div>
+                    <div class="space-y-3 pl-16" style="color: var(--charcoal);">
+                        <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span> 
+                           <span class="px-3 py-1 rounded-full text-sm" style="background: var(--warm-silver);" data-key="ceremony-time">15:00 Uhr</span></p>
+                        <p><span class="font-semibold" data-key="location">Ort:</span> <span data-key="ceremony-location">Kvareli Lake Resort</span></p>
+                        <p><span class="font-semibold" data-key="address">Adresse:</span> <span data-key="ceremony-address">Kvareli, Kachetien, Georgien</span></p>
+                    </div>
+                </div>
+
+                <!-- Reception -->
+                <div class="group hover-lift rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-white border-opacity-50 backdrop-blur-sm animate-slide-up"
+                    style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(232,232,232,0.8)); animation-delay: 0.2s;">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-full mr-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" 
+                             style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-serif text-2xl font-medium group-hover:text-opacity-80 transition-all duration-300" style="color: var(--sage-green);"
+                            data-key="reception">Feier</h3>
+                    </div>
+                    <div class="space-y-3 pl-16" style="color: var(--charcoal);">
+                        <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span> 
+                           <span class="px-3 py-1 rounded-full text-sm" style="background: var(--warm-silver);" data-key="reception-time">18:00 Uhr</span></p>
+                        <p><span class="font-semibold" data-key="location">Ort:</span> <span data-key="reception-location">Kvareli Lake Resort</span></p>
+                        <p><span class="font-semibold" data-key="address">Adresse:</span> <span data-key="reception-address">Kvareli, Kachetien, Georgien</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wedding Timeline -->
+    <section class="py-16 px-4" style="background-color: var(--cream);">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif text-4xl text-center mb-12 font-medium" style="color: var(--forest-green);"
+                data-key="timeline-title">Tagesablauf</h2>
+
+            <div class="space-y-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <span class="text-white font-semibold text-lg">15:00</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-serif text-xl font-medium mb-2" style="color: var(--sage-green);"
+                            data-key="ceremony-timeline">Trauungszeremonie</h3>
+                        <p style="color: var(--charcoal);" data-key="ceremony-description">Wir geben uns das Ja-Wort am
+                            malerischen Seeufer</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <span class="text-white font-semibold text-lg">16:00</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-serif text-xl font-medium mb-2" style="color: var(--sage-green);"
+                            data-key="photos-timeline">Fotoshooting</h3>
+                        <p style="color: var(--charcoal);" data-key="photos-description">Gemeinsame Fotos in den
+                            Weinbergen</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <span class="text-white font-semibold text-lg">18:00</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-serif text-xl font-medium mb-2" style="color: var(--sage-green);"
+                            data-key="reception-timeline">Empfang & Dinner</h3>
+                        <p style="color: var(--charcoal);" data-key="reception-description">Georgische Küche und
+                            internationale Spezialitäten</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <span class="text-white font-semibold text-lg">21:00</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-serif text-xl font-medium mb-2" style="color: var(--sage-green);"
+                            data-key="party-timeline">Tanz & Feier</h3>
+                        <p style="color: var(--charcoal);" data-key="party-description">Musik, Tanz und Feier bis in die
+                            frühen Morgenstunden</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Venue Information -->
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--warm-silver), white);">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif text-4xl text-center mb-12 font-medium" style="color: var(--forest-green);"
+                data-key="venue-title">Über den Veranstaltungsort</h2>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="font-serif text-2xl mb-4 font-medium" style="color: var(--sage-green);"
+                        data-key="venue-name">Kvareli Lake Resort</h3>
+                    <p class="mb-4 leading-relaxed" style="color: var(--charcoal);" data-key="venue-description">
+                        Das Kvareli Lake Resort liegt malerisch am Ufer des Kvareli-Sees in der wunderschönen Weinregion
+                        Kachetien, Georgien.
+                        Umgeben von Bergen und Weinbergen bietet dieser Ort die perfekte romantische Kulisse für unseren
+                        besonderen Tag.
+                    </p>
+                    <div class="space-y-2 text-sm" style="color: var(--charcoal); opacity: 0.8;">
+                        <p><span class="font-medium" data-key="venue-features">Ausstattung:</span> <span
+                                data-key="venue-features-list">Seeblick, Weinberge, Spa, Restaurant</span></p>
+                        <p><span class="font-medium" data-key="venue-capacity">Kapazität:</span> <span
+                                data-key="venue-capacity-number">150 Gäste</span></p>
+                    </div>
+                </div>
+                <div class="rounded-lg h-64 flex items-center justify-center shadow-lg"
+                    style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                    <p class="text-white font-medium" data-key="venue-photo-placeholder">Foto des Veranstaltungsortes
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Information -->
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--warm-silver), white);">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif text-4xl text-center mb-12 font-medium" style="color: var(--forest-green);"
+                data-key="travel-title">Anreise & Unterkunft</h2>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Travel Info -->
+                <div class="rounded-lg p-8 shadow-lg"
+                    style="background: linear-gradient(135deg, white, var(--warm-silver));">
+                    <div class="w-12 h-12 mb-4 rounded-full flex items-center justify-center"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd"
+                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl mb-4 font-medium" style="color: var(--sage-green);"
+                        data-key="travel-info">Anreiseinformationen</h3>
+                    <div class="space-y-3" style="color: var(--charcoal);">
+                        <div>
+                            <p class="font-medium" data-key="nearest-airport">Nächster Flughafen:</p>
+                            <p class="text-sm" data-key="airport-info">Tiflis (TBS) - 2 Stunden Fahrt</p>
+                        </div>
+                        <div>
+                            <p class="font-medium" data-key="transport">Transport:</p>
+                            <p class="text-sm" data-key="transport-info">Shuttleservice vom Flughafen verfügbar</p>
+                        </div>
+                        <div>
+                            <p class="font-medium" data-key="visa-info">Visa:</p>
+                            <p class="text-sm" data-key="visa-details">EU-Bürger benötigen kein Visa für Georgien</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accommodation -->
+                <div class="rounded-lg p-8 shadow-lg"
+                    style="background: linear-gradient(135deg, white, var(--warm-silver));">
+                    <div class="w-12 h-12 mb-4 rounded-full flex items-center justify-center"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl mb-4 font-medium" style="color: var(--sage-green);"
+                        data-key="accommodation">Unterkunft</h3>
+                    <div class="space-y-3" style="color: var(--charcoal);">
+                        <div>
+                            <p class="font-medium" data-key="resort-rooms">Kvareli Lake Resort:</p>
+                            <p class="text-sm" data-key="resort-info">Zimmer im Resort verfügbar</p>
+                        </div>
+                        <div>
+                            <p class="font-medium" data-key="nearby-hotels">Weitere Hotels:</p>
+                            <p class="text-sm" data-key="hotels-info">Verschiedene Optionen in Kvareli und Telavi</p>
+                        </div>
+                        <div>
+                            <p class="font-medium" data-key="booking-info">Buchung:</p>
+                            <p class="text-sm" data-key="booking-details">Kontaktiere uns für Gruppentarife</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--cream), white);">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="font-serif text-4xl text-center mb-4 font-medium" style="color: var(--forest-green);"
+                data-key="gallery-title">Unsere Geschichte</h2>
+            <p class="text-center mb-16 text-lg" style="color: var(--charcoal); opacity: 0.8;"
+                data-key="story-subtitle">Von der ersten Begegnung bis zum großen Tag</p>
+
+            <!-- Love Story Timeline -->
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full shimmer-bg animate-shimmer"
+                    style="background: linear-gradient(to bottom, var(--sage-green), var(--forest-green));"></div>
+
+                <!-- Story Milestones -->
+                <div class="space-y-16">
+                    <!-- First Meeting -->
+                    <div class="flex items-center group animate-slide-up">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="hover-lift rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-white border-opacity-50"
+                                style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(232,232,232,0.9));">
+                                <h3 class="font-serif text-xl mb-2 font-medium group-hover:scale-105 transition-transform duration-300" style="color: var(--sage-green);"
+                                    data-key="first-meeting-title">Erste Begegnung</h3>
+                                <p class="text-sm mb-2 px-3 py-1 rounded-full inline-block" style="background: var(--warm-silver); color: var(--charcoal);"
+                                    data-key="first-meeting-date">2020</p>
+                                <p class="text-sm leading-relaxed" style="color: var(--charcoal);"
+                                    data-key="first-meeting-text">Unsere Wege kreuzten sich zum ersten Mal...</p>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full shadow-2xl flex items-center justify-center relative z-10 group-hover:scale-125 transition-all duration-500 animate-pulse-slow"
+                            style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                            </svg>
+                        </div>
+                        <div class="w-1/2 pl-8">
+                            <div class="w-36 h-28 rounded-2xl shadow-2xl overflow-hidden hover-lift group-hover:scale-110 transition-all duration-500"
+                                style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                                <img src="assets/images/story-1.jpg" alt="Erste Begegnung"
+                                    class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="text-white text-xs font-medium" data-key="story-photo-1">Foto 1</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- First Date -->
+                    <div class="flex items-center group animate-slide-up" style="animation-delay: 0.2s;">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="w-36 h-28 rounded-2xl shadow-2xl overflow-hidden ml-auto hover-lift group-hover:scale-110 transition-all duration-500"
+                                style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                                <img src="assets/images/story-2.jpg" alt="Erstes Date"
+                                    class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110" style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="text-white text-xs font-medium" data-key="story-photo-2">Foto 2</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full shadow-2xl flex items-center justify-center relative z-10 group-hover:scale-125 transition-all duration-500 animate-pulse-slow"
+                            style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green)); animation-delay: 1s;">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                        <div class="w-1/2 pl-8">
+                            <div class="hover-lift rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-white border-opacity-50"
+                                style="background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(232,232,232,0.9));">
+                                <h3 class="font-serif text-xl mb-2 font-medium group-hover:scale-105 transition-transform duration-300" style="color: var(--sage-green);"
+                                    data-key="first-date-title">Erstes Date</h3>
+                                <p class="text-sm mb-2 px-3 py-1 rounded-full inline-block" style="background: var(--warm-silver); color: var(--charcoal);"
+                                    data-key="first-date-date">2021</p>
+                                <p class="text-sm leading-relaxed" style="color: var(--charcoal);"
+                                    data-key="first-date-text">Ein magischer Abend, der alles veränderte...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Engagement -->
+                    <div class="flex items-center">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="rounded-lg p-6 shadow-lg"
+                                style="background: linear-gradient(135deg, white, var(--warm-silver));">
+                                <h3 class="font-serif text-xl mb-2 font-medium" style="color: var(--sage-green);"
+                                    data-key="engagement-title">Verlobung</h3>
+                                <p class="text-sm mb-2" style="color: var(--charcoal); opacity: 0.7;"
+                                    data-key="engagement-date">2025</p>
+                                <p class="text-sm leading-relaxed" style="color: var(--charcoal);"
+                                    data-key="engagement-text">Der Moment, als aus einem Traum Realität wurde...</p>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full shadow-lg flex items-center justify-center relative z-10"
+                            style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z" />
+                            </svg>
+                        </div>
+                        <div class="w-1/2 pl-8">
+                            <div class="w-32 h-24 rounded-lg shadow-lg overflow-hidden"
+                                style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                                <img src="assets/images/story-3.jpg" alt="Verlobung" class="w-full h-full object-cover"
+                                    style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="text-white text-xs font-medium" data-key="story-photo-3">Foto 3</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wedding Day -->
+                    <div class="flex items-center">
+                        <div class="w-1/2 pr-8 text-right">
+                            <div class="w-32 h-24 rounded-lg shadow-lg overflow-hidden ml-auto"
+                                style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                                <img src="assets/images/story-4.jpg" alt="Hochzeitstag"
+                                    class="w-full h-full object-cover" style="display: none;"
+                                    onload="this.style.display='block'; this.parentElement.style.background='none';">
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <p class="text-white text-xs font-medium" data-key="story-photo-4">Foto 4</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full shadow-lg flex items-center justify-center relative z-10"
+                            style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                            </svg>
+                        </div>
+                        <div class="w-1/2 pl-8">
+                            <div class="rounded-lg p-6 shadow-lg"
+                                style="background: linear-gradient(135deg, white, var(--warm-silver));">
+                                <h3 class="font-serif text-xl mb-2 font-medium" style="color: var(--sage-green);"
+                                    data-key="wedding-day-title">Unser großer Tag</h3>
+                                <p class="text-sm mb-2" style="color: var(--charcoal); opacity: 0.7;"
+                                    data-key="wedding-day-date">19. September 2026</p>
+                                <p class="text-sm leading-relaxed" style="color: var(--charcoal);"
+                                    data-key="wedding-day-text">Der Beginn unseres gemeinsamen Abenteuers...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16">
+                <p class="text-lg font-light italic" style="color: var(--forest-green);" data-key="gallery-description">
+                    Wir freuen uns darauf, neue Erinnerungen mit dir zu schaffen!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dress Code Section -->
+    <section class="py-16 px-4" style="background-color: var(--cream);">
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center shadow-lg"
+                style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z" />
+                </svg>
+            </div>
+            <h3 class="font-serif text-3xl mb-4 font-medium" style="color: var(--forest-green);"
+                data-key="dress-code-title">Dresscode</h3>
+            <p class="text-xl mb-4" style="color: var(--charcoal);" data-key="dress-code-main">Cocktail / Semi-Formal
+            </p>
+            <p class="leading-relaxed max-w-lg mx-auto" style="color: var(--charcoal); opacity: 0.8;"
+                data-key="dress-code-description">
+                Wir freuen uns auf elegante Outfits in warmen Farbtönen.
+                Bitte denkt an bequeme Schuhe für den Außenbereich.
+            </p>
+        </div>
+    </section>
+
+    <!-- RSVP Section -->
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="font-serif text-4xl mb-8 text-white font-medium" data-key="rsvp-title">Bitte bestätige deine
+                Teilnahme</h2>
+            <p class="text-lg text-white mb-8 opacity-90" data-key="rsvp-text">Wir freuen uns auf deine Antwort bis zum
+                1.
+                August 2026</p>
+
+            <div class="rounded-lg p-8 shadow-xl"
+                style="background: linear-gradient(135deg, white, var(--warm-silver));">
+                <form class="space-y-4">
+                    <input type="text" placeholder="Dein Name" data-placeholder="your-name"
+                        class="w-full p-3 rounded-lg transition-all"
+                        style="border: 2px solid var(--silver); background-color: var(--cream);"
+                        onfocus="this.style.borderColor='var(--sage-green)'; this.style.boxShadow='0 0 0 3px rgba(156, 175, 136, 0.1)'"
+                        onblur="this.style.borderColor='var(--silver)'; this.style.boxShadow='none'">
+                    <input type="email" placeholder="E-Mail" data-placeholder="email"
+                        class="w-full p-3 rounded-lg transition-all"
+                        style="border: 2px solid var(--silver); background-color: var(--cream);"
+                        onfocus="this.style.borderColor='var(--sage-green)'; this.style.boxShadow='0 0 0 3px rgba(156, 175, 136, 0.1)'"
+                        onblur="this.style.borderColor='var(--silver)'; this.style.boxShadow='none'">
+                    <select class="w-full p-3 rounded-lg transition-all"
+                        style="border: 2px solid var(--silver); background-color: var(--cream);"
+                        onfocus="this.style.borderColor='var(--sage-green)'; this.style.boxShadow='0 0 0 3px rgba(156, 175, 136, 0.1)'"
+                        onblur="this.style.borderColor='var(--silver)'; this.style.boxShadow='none'">
+                        <option data-key="attending-yes">Ich komme gerne</option>
+                        <option data-key="attending-no">Ich kann leider nicht kommen</option>
+                    </select>
+                    <textarea placeholder="Nachricht (optional)" data-placeholder="message-optional" rows="3"
+                        class="w-full p-3 rounded-lg transition-all"
+                        style="border: 2px solid var(--silver); background-color: var(--cream);"
+                        onfocus="this.style.borderColor='var(--sage-green)'; this.style.boxShadow='0 0 0 3px rgba(156, 175, 136, 0.1)'"
+                        onblur="this.style.borderColor='var(--silver)'; this.style.boxShadow='none'"></textarea>
+                    <button type="submit"
+                        class="w-full text-white py-3 rounded-lg transition-all font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));"
+                        data-key="send-rsvp">Antwort senden</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-4 text-center" style="background-color: var(--charcoal); color: var(--silver);">
+        <p class="font-light" data-key="footer-text">Wir freuen uns darauf, diesen besonderen Tag mit dir zu teilen</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
