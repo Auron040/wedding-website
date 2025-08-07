@@ -72,7 +72,7 @@
         :root {
             --warm-beige: #E6D7C3;
             --dusty-rose: #D4A5A5;
-            --soft-lavender: #C8A8D8;
+            --soft-orange: #E8C4A0;
             --warm-pink: #E8C4C4;
             --cream: #FAF9F6;
             --light-beige: #F5F2E8;
@@ -89,12 +89,12 @@
         }
 
         .shimmer-bg {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             background-size: 200% 100%;
         }
 
         .text-shadow {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .hover-lift {
@@ -136,10 +136,117 @@
             transform: rotateY(180deg);
         }
 
+        /* Notification animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Loading spinner animation */
+        .loading-spinner.show {
+            display: inline-block !important;
+        }
+
         .portrait-container:hover .portrait-side {
             border-radius: 50% !important;
         }
+
+        /* Background images with fallback support for both .jpg and .png */
+        .ceremony-bg {
+            background-image: url('assets/images/ceremony-bg.jpg');
+        }
+
+        /* Fallback to PNG if JPG doesn't exist */
+        .ceremony-bg:not([style*="background-image"]) {
+            background-image: url('assets/images/ceremony-bg.png');
+        }
+
+        .reception-bg {
+            background-image: url('assets/images/reception-bg.jpg');
+        }
+
+        /* Fallback to PNG if JPG doesn't exist */
+        .reception-bg:not([style*="background-image"]) {
+            background-image: url('assets/images/reception-bg.png');
+        }
+
+        /* Simple card image overlay */
+        .card-image-overlay {
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card-image-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
+
+    <!-- Inline script for immediate availability -->
+    <script>
+        function toggleCard(card, cardType) {
+            console.log('Toggling card:', cardType, card);
+
+            if (!card) {
+                console.error('No card provided');
+                return;
+            }
+
+            const overlay = card.querySelector('.card-image-overlay');
+            console.log('Found overlay:', overlay);
+
+            if (!overlay) {
+                console.error('No overlay found in card');
+                return;
+            }
+
+            // Check current opacity
+            const currentOpacity = window.getComputedStyle(overlay).opacity;
+            console.log('Current overlay opacity:', currentOpacity);
+
+            if (currentOpacity === '0') {
+                // Show image overlay
+                overlay.style.opacity = '1';
+                overlay.style.pointerEvents = 'auto';
+                console.log('Image overlay shown');
+
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    if (overlay.style.opacity === '1') {
+                        overlay.style.opacity = '0';
+                        overlay.style.pointerEvents = 'none';
+                        console.log('Auto-hidden image overlay');
+                    }
+                }, 5000);
+            } else {
+                // Hide image overlay
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+                console.log('Image overlay hidden');
+            }
+        }
+    </script>
 </head>
 
 <body class="font-sans" style="background-color: var(--cream); color: var(--charcoal);">
@@ -156,24 +263,25 @@
     <section class="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat relative"
         style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.1)), url('assets/images/hero-background.png');">
         <div class="text-center px-4 relative z-10 animate-fade-in">
-            <h1 class="font-elegant text-6xl md:text-8xl mb-4 font-normal tracking-wide animate-slide-up relative"
-                style="color: var(--georgian-wine); text-shadow: 2px 2px 4px rgba(212, 165, 165, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);"
+            <h1 class="font-elegant text-4xl sm:text-5xl md:text-6xl lg:text-8xl mb-4 font-normal tracking-wide animate-slide-up relative px-2"
+                style="color: var(--charcoal); text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 10px rgba(255, 255, 255, 0.8);"
                 data-key="bride-groom-names">
-                Fabian 
-                <span class="inline-block mx-4 text-4xl md:text-6xl animate-heart-beat" style="color: var(--rose-gold);">♥</span>
+                Fabian
+                <span class="inline-block mx-2 sm:mx-4 text-2xl sm:text-3xl md:text-4xl lg:text-6xl animate-heart-beat"
+                    style="color: var(--rose-gold);">♥</span>
                 Anastasia
             </h1>
-            
+
             <!-- Georgian decorative element -->
             <div class="text-center mb-6">
-                <span class="font-script text-3xl md:text-4xl font-bold" 
-                      style="color: var(--dusty-rose); text-shadow: 3px 3px 6px rgba(0,0,0,0.7), 0 0 15px rgba(255,255,255,0.8);" 
-                      data-key="georgian-blessing">
+                <span class="font-elegant text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2"
+                    style="color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.7), 0 0 15px rgba(255,255,255,0.8);"
+                    data-key="georgian-blessing">
                     სიყვარული და ბედნიერება
                 </span>
-                <p class="text-lg md:text-xl mt-2 font-bold" 
-                   style="color: var(--charcoal); text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.9);" 
-                   data-key="georgian-translation">
+                <p class="text-base sm:text-lg md:text-xl mt-2 font-bold px-2"
+                    style="color: var(--charcoal); text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.9);"
+                    data-key="georgian-translation">
                     (Liebe und Glück)
                 </p>
             </div>
@@ -181,57 +289,74 @@
             <!-- Countdown Timer -->
             <div class="mb-8 animate-slide-up" style="animation-delay: 0.2s;">
                 <div class="grid grid-cols-4 gap-3 md:gap-4 max-w-md mx-auto mb-4">
-                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300">
-                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-days">--</div>
-                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-days">Tage</div>
+                    <div
+                        class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow"
+                            style="color: var(--charcoal);" id="countdown-days">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);"
+                            data-key="countdown-days">Tage</div>
                     </div>
-                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.1s;">
-                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-hours">--</div>
-                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-hours">Stunden</div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300"
+                        style="animation-delay: 0.1s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow"
+                            style="color: var(--charcoal);" id="countdown-hours">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);"
+                            data-key="countdown-hours">Stunden</div>
                     </div>
-                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.2s;">
-                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-minutes">--</div>
-                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-minutes">Minuten</div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300"
+                        style="animation-delay: 0.2s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow"
+                            style="color: var(--charcoal);" id="countdown-minutes">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);"
+                            data-key="countdown-minutes">Minuten</div>
                     </div>
-                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300" style="animation-delay: 0.3s;">
-                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow" style="color: var(--charcoal);" id="countdown-seconds">--</div>
-                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);" data-key="countdown-seconds">Sekunden</div>
+                    <div class="glass-effect rounded-xl p-3 shadow-2xl hover-lift hover:scale-105 transition-all duration-300"
+                        style="animation-delay: 0.3s;">
+                        <div class="text-2xl md:text-3xl font-semibold animate-pulse-slow"
+                            style="color: var(--charcoal);" id="countdown-seconds">--</div>
+                        <div class="text-xs md:text-sm opacity-95 font-medium" style="color: var(--charcoal);"
+                            data-key="countdown-seconds">Sekunden</div>
                     </div>
                 </div>
-                <p class="text-lg md:text-xl font-bold animate-bounce-slow" 
-                   style="color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);" 
-                   data-key="countdown-until">bis zur Hochzeit</p>
+                <p class="text-lg md:text-xl font-bold animate-bounce-slow"
+                    style="color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);"
+                    data-key="countdown-until">bis zur Hochzeit</p>
             </div>
 
-            <p class="text-2xl md:text-3xl font-bold mb-8 animate-slide-up" 
-               style="animation-delay: 0.4s; color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);" 
-               data-key="wedding-date">19. September 2026</p>
-            <p class="text-xl md:text-2xl font-bold mb-8 animate-slide-up" 
-               style="animation-delay: 0.6s; color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);" 
-               data-key="invitation-text">Wir laden dich herzlich zu unserer Hochzeit ein</p>
+            <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-8 animate-slide-up px-4"
+                style="animation-delay: 0.4s; color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);"
+                data-key="wedding-date">19. September 2026</p>
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-8 animate-slide-up px-4"
+                style="animation-delay: 0.6s; color: var(--charcoal); text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.9);"
+                data-key="invitation-text">Wir laden dich herzlich zu unserer Hochzeit ein</p>
 
             <!-- Couple Photos -->
-            <div class="flex justify-center items-end gap-12 md:gap-16 mt-8 animate-slide-up" style="animation-delay: 0.8s;">
+            <div class="flex justify-center items-end gap-12 md:gap-16 mt-8 animate-slide-up"
+                style="animation-delay: 0.8s;">
                 <div class="text-center group">
                     <div class="portrait-container w-28 h-28 md:w-36 md:h-36 shadow-2xl border-4 border-opacity-50 hover-lift group-hover:scale-110 transition-all duration-500 animate-float cursor-pointer"
-                         style="border-color: var(--silver);">
+                        style="border-color: var(--silver);">
                         <div id="fabian-flip" class="portrait-flip">
                             <!-- Fabian Child Photo (Front) -->
-                            <div class="portrait-side" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
-                                <img src="assets/images/fabian-child.jpg" alt="Fabian als Kind" class="w-full h-full object-cover"
-                                    style="display: none;"
+                            <div class="portrait-side"
+                                style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/fabian-child.jpg" alt="Fabian als Kind"
+                                    class="w-full h-full object-cover" style="display: none;"
                                     onload="this.style.display='block'; this.parentElement.style.background='none';">
                                 <div class="w-full h-full flex items-center justify-center">
-                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="fabian-child">Fabian Kind</p>
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);"
+                                        data-key="fabian-child">Fabian Kind</p>
                                 </div>
                             </div>
                             <!-- Fabian Adult Photo (Back) -->
-                            <div class="portrait-side portrait-back" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
-                                <img src="assets/images/fabian-adult.jpg" alt="Fabian als Erwachsener" class="w-full h-full object-cover"
-                                    style="display: none;"
+                            <div class="portrait-side portrait-back"
+                                style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/fabian-adult.jpg" alt="Fabian als Erwachsener"
+                                    class="w-full h-full object-cover" style="display: none;"
                                     onload="this.style.display='block'; this.parentElement.style.background='none';">
                                 <div class="w-full h-full flex items-center justify-center">
-                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="fabian-adult">Fabian</p>
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);"
+                                        data-key="fabian-adult">Fabian</p>
                                 </div>
                             </div>
                         </div>
@@ -239,24 +364,28 @@
                 </div>
                 <div class="text-center group">
                     <div class="portrait-container w-28 h-28 md:w-36 md:h-36 shadow-2xl border-4 border-opacity-50 hover-lift group-hover:scale-110 transition-all duration-500 animate-float cursor-pointer"
-                         style="animation-delay: 1s; border-color: var(--silver);">
+                        style="animation-delay: 1s; border-color: var(--silver);">
                         <div id="anastasia-flip" class="portrait-flip">
                             <!-- Anastasia Child Photo (Front) -->
-                            <div class="portrait-side" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
-                                <img src="assets/images/anastasia-child.jpg" alt="Anastasia als Kind" class="w-full h-full object-cover"
-                                    style="display: none;"
+                            <div class="portrait-side"
+                                style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/anastasia-child.jpg" alt="Anastasia als Kind"
+                                    class="w-full h-full object-cover" style="display: none;"
                                     onload="this.style.display='block'; this.parentElement.style.background='none';">
                                 <div class="w-full h-full flex items-center justify-center">
-                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="anastasia-child">Anastasia Kind</p>
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);"
+                                        data-key="anastasia-child">Anastasia Kind</p>
                                 </div>
                             </div>
                             <!-- Anastasia Adult Photo (Back) -->
-                            <div class="portrait-side portrait-back" style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
-                                <img src="assets/images/anastasia-adult.jpg" alt="Anastasia als Erwachsene" class="w-full h-full object-cover"
-                                    style="display: none;"
+                            <div class="portrait-side portrait-back"
+                                style="background: linear-gradient(135deg, var(--warm-silver), var(--silver));">
+                                <img src="assets/images/anastasia-adult.jpg" alt="Anastasia als Erwachsene"
+                                    class="w-full h-full object-cover" style="display: none;"
                                     onload="this.style.display='block'; this.parentElement.style.background='none';">
                                 <div class="w-full h-full flex items-center justify-center">
-                                    <p class="font-medium text-sm" style="color: var(--charcoal);" data-key="anastasia-adult">Anastasia</p>
+                                    <p class="font-medium text-sm" style="color: var(--charcoal);"
+                                        data-key="anastasia-adult">Anastasia</p>
                                 </div>
                             </div>
                         </div>
@@ -269,75 +398,115 @@
     <!-- Quote Section -->
     <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--cream), var(--warm-silver));">
         <div class="max-w-3xl mx-auto text-center">
-            <blockquote class="font-serif text-2xl md:text-3xl font-light italic mb-6"
-                style="color: var(--forest-green);" data-key="wedding-quote">
-                "Die Liebe ist das einzige, was wächst, wenn wir es teilen."
-            </blockquote>
-            <cite class="text-lg" style="color: var(--sage-green);" data-key="quote-author">— Antoine de
-                Saint-Exupéry</cite>
+            <!-- Quote Card with Countdown-style frame -->
+            <div class="glass-effect rounded-2xl p-8 shadow-2xl hover-lift transition-all duration-300 mx-4"
+                style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(244,228,224,0.8)); border: 2px solid rgba(212, 165, 165, 0.3);">
+                <blockquote
+                    class="font-elegant text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium mb-6 relative px-2"
+                    style="color: var(--georgian-wine);" data-key="wedding-quote">
+                    "Die Liebe ist das einzige, was wächst, wenn wir es teilen."
+                </blockquote>
+                <cite class="text-xl font-medium" style="color: var(--dusty-rose);" data-key="quote-author">— Antoine de
+                    Saint-Exupéry</cite>
+            </div>
         </div>
     </section>
 
     <!-- Event Details -->
-    <section class="py-16 px-4 relative overflow-hidden" style="background: linear-gradient(135deg, var(--cream), var(--beige));">
+    <section class="py-16 px-4 relative overflow-hidden"
+        style="background: linear-gradient(135deg, var(--cream), var(--beige));">
         <!-- Decorative Elements -->
-        <div class="absolute top-0 left-0 w-32 h-32 rounded-full opacity-10 animate-float" style="background: var(--dusty-rose);"></div>
-        <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full opacity-10 animate-float" style="background: var(--soft-lavender); animation-delay: 2s;"></div>
-        
+        <div class="absolute top-0 left-0 w-32 h-32 rounded-full opacity-10 animate-float"
+            style="background: var(--dusty-rose);"></div>
+        <div class="absolute bottom-0 right-0 w-24 h-24 rounded-full opacity-10 animate-float"
+            style="background: var(--soft-orange); animation-delay: 2s;"></div>
+
         <div class="max-w-4xl mx-auto relative z-10">
-            <h2 class="font-script text-5xl text-center mb-12 font-medium animate-fade-in" style="color: var(--georgian-wine);"
-                data-key="event-details">Veranstaltungsdetails</h2>
-            
+            <h2 class="font-elegant text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center mb-12 font-bold animate-fade-in px-4"
+                style="color: var(--georgian-wine);" data-key="event-details">Veranstaltungsdetails</h2>
+
             <!-- Georgian wine decoration -->
             <div class="text-center mb-8">
-                <span class="text-4xl opacity-60" style="color: var(--dusty-rose);">🍇</span>
-                <span class="mx-4 font-script text-lg" style="color: var(--warm-mauve);">ღვინო და სიხარული</span>
-                <span class="text-4xl opacity-60" style="color: var(--dusty-rose);">🍇</span>
-                <p class="text-xs mt-1 opacity-70" style="color: var(--warm-mauve);">(Wein und Freude)</p>
+                <span class="font-elegant text-2xl font-bold" style="color: var(--warm-mauve);"
+                    data-key="wine-joy-georgian">ღვინო და სიხარული</span>
+                <p class="text-xs mt-1 opacity-70" style="color: var(--warm-mauve);" data-key="wine-joy-translation">
+                    (Wein und Freude)</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 px-4">
                 <!-- Ceremony -->
-                <div class="group hover-lift rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-opacity-50 backdrop-blur-sm animate-slide-up"
-                    style="background: linear-gradient(135deg, var(--beige), rgba(232,232,232,0.8)); border-color: var(--beige);">
-                    <div class="flex items-center mb-6">
-                        <div class="w-14 h-14 rounded-full mr-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" 
-                             style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
-                            <span class="text-2xl">💒</span>
+                <div class="ceremony-card group hover-lift rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-opacity-50 backdrop-blur-sm animate-slide-up relative overflow-hidden cursor-pointer"
+                    style="border-color: var(--beige); min-height: 280px;" onclick="toggleCard(this, 'ceremony')">
+                    <!-- Background Image with Overlay -->
+                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat ceremony-bg card-bg"
+                        style="opacity: 0.4;">
+                    </div>
+                    <div class="absolute inset-0 bg-white card-overlay" style="opacity: 0.4;"></div>
+
+                    <!-- Content -->
+                    <div class="relative z-10 card-content">
+                        <div class="mb-4">
+                            <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold group-hover:text-opacity-80 transition-all duration-300 mb-2"
+                                style="color: var(--georgian-wine);" data-key="ceremony">Trauung</h3>
+                            <p class="text-xs sm:text-sm font-elegant font-bold" style="color: var(--warm-mauve);"
+                                data-key="ceremony-georgian">ქორწინება (Hochzeit)</p>
                         </div>
-                        <div>
-                            <h3 class="font-script text-3xl font-medium group-hover:text-opacity-80 transition-all duration-300" style="color: var(--georgian-wine);"
-                                data-key="ceremony">Trauung</h3>
-                            <p class="text-sm opacity-70 font-script" style="color: var(--warm-mauve);">ქორწინება (Hochzeit)</p>
+                        <div class="space-y-2" style="color: var(--charcoal);">
+                            <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span>
+                                <span class="px-3 py-1 rounded-full text-sm font-medium shadow-sm"
+                                    style="background: rgba(255,255,255,0.9);" data-key="ceremony-time">15:00 Uhr</span>
+                            </p>
+                            <p><span class="font-semibold" data-key="location">Ort:</span> <span
+                                    data-key="ceremony-location">Kvareli Lake Resort</span></p>
+                            <p><span class="font-semibold" data-key="address">Adresse:</span> <span
+                                    data-key="ceremony-address">Kvareli, Kachetien, Georgien</span></p>
                         </div>
                     </div>
-                    <div class="space-y-3 pl-16" style="color: var(--charcoal);">
-                        <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span> 
-                           <span class="px-3 py-1 rounded-full text-sm" style="background: var(--warm-silver);" data-key="ceremony-time">15:00 Uhr</span></p>
-                        <p><span class="font-semibold" data-key="location">Ort:</span> <span data-key="ceremony-location">Kvareli Lake Resort</span></p>
-                        <p><span class="font-semibold" data-key="address">Adresse:</span> <span data-key="ceremony-address">Kvareli, Kachetien, Georgien</span></p>
+
+                    <!-- Full Image Overlay (hidden by default) -->
+                    <div
+                        class="absolute inset-0 bg-cover bg-center bg-no-repeat ceremony-bg card-image-overlay opacity-0 transition-opacity duration-500 flex items-center justify-center">
+                        <p class="text-white text-2xl font-elegant font-bold bg-black bg-opacity-50 px-6 py-3 rounded-lg"
+                            data-key="ceremony">Trauung</p>
                     </div>
                 </div>
 
                 <!-- Reception -->
-                <div class="group hover-lift rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-opacity-50 backdrop-blur-sm animate-slide-up"
-                    style="background: linear-gradient(135deg, var(--beige), rgba(232,232,232,0.8)); border-color: var(--beige); animation-delay: 0.2s;">
-                    <div class="flex items-center mb-6">
-                        <div class="w-14 h-14 rounded-full mr-4 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300" 
-                             style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
-                            <span class="text-2xl">🥂</span>
+                <div class="reception-card group hover-lift rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 border border-opacity-50 backdrop-blur-sm animate-slide-up relative overflow-hidden cursor-pointer"
+                    style="border-color: var(--beige); min-height: 280px; animation-delay: 0.2s;"
+                    onclick="toggleCard(this, 'reception')">
+                    <!-- Background Image with Overlay -->
+                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat reception-bg card-bg"
+                        style="opacity: 0.4;">
+                    </div>
+                    <div class="absolute inset-0 bg-white card-overlay" style="opacity: 0.4;"></div>
+
+                    <!-- Content -->
+                    <div class="relative z-10 card-content">
+                        <div class="mb-4">
+                            <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold group-hover:text-opacity-80 transition-all duration-300 mb-2"
+                                style="color: var(--georgian-wine);" data-key="reception">Feier</h3>
+                            <p class="text-xs sm:text-sm font-elegant font-bold" style="color: var(--warm-mauve);"
+                                data-key="reception-georgian">ზეიმი (Fest)</p>
                         </div>
-                        <div>
-                            <h3 class="font-script text-3xl font-medium group-hover:text-opacity-80 transition-all duration-300" style="color: var(--georgian-wine);"
-                                data-key="reception">Feier</h3>
-                            <p class="text-sm opacity-70 font-script" style="color: var(--warm-mauve);">ზეიმი (Fest)</p>
+                        <div class="space-y-2" style="color: var(--charcoal);">
+                            <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span>
+                                <span class="px-3 py-1 rounded-full text-sm font-medium shadow-sm"
+                                    style="background: rgba(255,255,255,0.9);" data-key="reception-time">18:00
+                                    Uhr</span>
+                            </p>
+                            <p><span class="font-semibold" data-key="location">Ort:</span> <span
+                                    data-key="reception-location">Kvareli Lake Resort</span></p>
+                            <p><span class="font-semibold" data-key="address">Adresse:</span> <span
+                                    data-key="reception-address">Kvareli, Kachetien, Georgien</span></p>
                         </div>
                     </div>
-                    <div class="space-y-3 pl-16" style="color: var(--charcoal);">
-                        <p class="flex items-center"><span class="font-semibold mr-2" data-key="time">Zeit:</span> 
-                           <span class="px-3 py-1 rounded-full text-sm" style="background: var(--warm-silver);" data-key="reception-time">18:00 Uhr</span></p>
-                        <p><span class="font-semibold" data-key="location">Ort:</span> <span data-key="reception-location">Kvareli Lake Resort</span></p>
-                        <p><span class="font-semibold" data-key="address">Adresse:</span> <span data-key="reception-address">Kvareli, Kachetien, Georgien</span></p>
+
+                    <!-- Full Image Overlay (hidden by default) -->
+                    <div
+                        class="absolute inset-0 bg-cover bg-center bg-no-repeat reception-bg card-image-overlay opacity-0 transition-opacity duration-500 flex items-center justify-center">
+                        <p class="text-white text-2xl font-elegant font-bold bg-black bg-opacity-50 px-6 py-3 rounded-lg"
+                            data-key="reception">Feier</p>
                     </div>
                 </div>
             </div>
@@ -347,70 +516,76 @@
     <!-- Wedding Timeline -->
     <section class="py-16 px-4" style="background-color: var(--cream);">
         <div class="max-w-4xl mx-auto">
-            <h2 class="font-script text-5xl text-center mb-8 font-medium" style="color: var(--georgian-wine);"
-                data-key="timeline-title">Tagesablauf</h2>
-            
+            <h2 class="font-elegant text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-center mb-8 font-bold px-4"
+                style="color: var(--georgian-wine);" data-key="timeline-title">Tagesablauf</h2>
+
             <!-- Georgian timeline decoration -->
             <div class="text-center mb-12">
-                <span class="font-script text-lg" style="color: var(--warm-mauve);">დღის განრიგი</span>
-                <p class="text-xs opacity-70" style="color: var(--warm-mauve);">(Tagesplan)</p>
-                <div class="w-32 h-0.5 mx-auto mt-4" style="background: linear-gradient(to right, transparent, var(--dusty-rose), transparent);"></div>
+                <span class="font-elegant text-2xl font-bold" style="color: var(--warm-mauve);">დღის განრიგი</span>
+                <p class="text-sm font-bold" style="color: var(--warm-mauve);" data-key="timeline-georgian">(Tagesplan)
+                </p>
+                <div class="w-32 h-0.5 mx-auto mt-4"
+                    style="background: linear-gradient(to right, transparent, var(--dusty-rose), transparent);"></div>
             </div>
 
             <div class="space-y-8">
                 <div class="flex items-center gap-6">
                     <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
+                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-orange));">
                         <span class="text-white font-semibold text-lg">15:00</span>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-script text-2xl font-medium mb-2" style="color: var(--georgian-wine);"
-                            data-key="ceremony-timeline">Trauungszeremonie</h3>
+                        <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold mb-2"
+                            style="color: var(--georgian-wine);" data-key="ceremony-timeline">Trauungszeremonie</h3>
                         <p style="color: var(--charcoal);" data-key="ceremony-description">Wir geben uns das Ja-Wort am
                             malerischen Seeufer</p>
-                        <p class="text-sm font-script opacity-70 mt-1" style="color: var(--warm-mauve);">ქორწინების ცერემონია</p>
+                        <p class="text-sm sm:text-base font-elegant font-bold mt-1" style="color: var(--warm-mauve);"
+                            data-key="ceremony-timeline-georgian">ქორწინების ცერემონია</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-6">
                     <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
+                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-orange));">
                         <span class="text-white font-semibold text-lg">16:00</span>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-script text-2xl font-medium mb-2" style="color: var(--georgian-wine);"
-                            data-key="photos-timeline">Fotoshooting</h3>
+                        <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold mb-2"
+                            style="color: var(--georgian-wine);" data-key="photos-timeline">Fotoshooting</h3>
                         <p style="color: var(--charcoal);" data-key="photos-description">Gemeinsame Fotos in den
-                            Weinbergen 🍇</p>
-                        <p class="text-sm font-script opacity-70 mt-1" style="color: var(--warm-mauve);">ფოტოსესია ვენახებში</p>
+                            Weinbergen</p>
+                        <p class="text-sm sm:text-base font-elegant font-bold mt-1" style="color: var(--warm-mauve);"
+                            data-key="photos-timeline-georgian">ფოტოსესია ვენახებში</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-6">
                     <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
+                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-orange));">
                         <span class="text-white font-semibold text-lg">18:00</span>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-script text-2xl font-medium mb-2" style="color: var(--georgian-wine);"
-                            data-key="reception-timeline">Empfang & Dinner</h3>
+                        <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold mb-2"
+                            style="color: var(--georgian-wine);" data-key="reception-timeline">Empfang & Dinner</h3>
                         <p style="color: var(--charcoal);" data-key="reception-description">Georgische Küche und
                             internationale Spezialitäten 🍷</p>
-                        <p class="text-sm font-script opacity-70 mt-1" style="color: var(--warm-mauve);">ქართული სამზარეულო</p>
+                        <p class="text-sm sm:text-base font-elegant font-bold mt-1" style="color: var(--warm-mauve);"
+                            data-key="reception-timeline-georgian">ქართული სამზარეულო</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-6">
                     <div class="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
+                        style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-orange));">
                         <span class="text-white font-semibold text-lg">21:00</span>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-script text-2xl font-medium mb-2" style="color: var(--georgian-wine);"
-                            data-key="party-timeline">Tanz & Feier</h3>
+                        <h3 class="font-elegant text-xl sm:text-2xl md:text-3xl font-bold mb-2"
+                            style="color: var(--georgian-wine);" data-key="party-timeline">Tanz & Feier</h3>
                         <p style="color: var(--charcoal);" data-key="party-description">Musik, Tanz und Feier bis in die
                             frühen Morgenstunden 💃🕺</p>
-                        <p class="text-sm font-script opacity-70 mt-1" style="color: var(--warm-mauve);">ცეკვა და ზეიმი</p>
+                        <p class="text-sm sm:text-base font-elegant font-bold mt-1" style="color: var(--warm-mauve);"
+                            data-key="party-timeline-georgian">ცეკვა და ზეიმი</p>
                     </div>
                 </div>
             </div>
@@ -423,7 +598,7 @@
             <h2 class="font-serif text-4xl text-center mb-12 font-medium" style="color: var(--forest-green);"
                 data-key="venue-title">Über den Veranstaltungsort</h2>
 
-            <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center px-4">
                 <div>
                     <h3 class="font-serif text-2xl mb-4 font-medium" style="color: var(--sage-green);"
                         data-key="venue-name">Kvareli Lake Resort</h3>
@@ -441,13 +616,13 @@
                     </div>
                 </div>
                 <div class="rounded-lg h-64 overflow-hidden shadow-lg hover-lift transition-all duration-300">
-                    <img src="assets/images/location.jpg" alt="Kvareli Lake Resort" 
-                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                         style="display: none;"
-                         onload="this.style.display='block';">
+                    <img src="assets/images/location.jpg" alt="Kvareli Lake Resort"
+                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        style="display: none;" onload="this.style.display='block';">
                     <div class="w-full h-full flex items-center justify-center"
-                         style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
-                        <p class="text-white font-medium" data-key="venue-photo-placeholder">Foto des Veranstaltungsortes</p>
+                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
+                        <p class="text-white font-medium" data-key="venue-photo-placeholder">Foto des
+                            Veranstaltungsortes</p>
                     </div>
                 </div>
             </div>
@@ -460,32 +635,28 @@
             <h2 class="font-serif text-4xl text-center mb-12 font-medium" style="color: var(--forest-green);"
                 data-key="travel-title">Anreise & Unterkunft</h2>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 px-4">
                 <!-- Travel Info -->
                 <div class="rounded-lg p-8 shadow-lg"
                     style="background: linear-gradient(135deg, var(--beige), var(--warm-silver));">
-                    <div class="w-12 h-12 mb-4 rounded-full flex items-center justify-center"
-                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd"
-                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </div>
                     <h3 class="font-serif text-xl mb-4 font-medium" style="color: var(--sage-green);"
                         data-key="travel-info">Anreiseinformationen</h3>
                     <div class="space-y-4" style="color: var(--charcoal);">
                         <div>
                             <p class="font-medium" data-key="nearest-airport">Treffpunkt:</p>
-                            <p class="text-sm" data-key="airport-info">Wir treffen uns spätestens am 18. September in Tiflis</p>
+                            <p class="text-sm" data-key="airport-info">Wir treffen uns spätestens am 18. September in
+                                Tiflis</p>
                         </div>
                         <div>
                             <p class="font-medium" data-key="transport">Flugverbindungen:</p>
-                            <p class="text-sm" data-key="transport-info">Aus Berlin fliegt man Mittwoch und Samstag direkt nach Tiflis (ca. 4 Stunden). Wir empfehlen von Mittwoch zu Mittwoch anzureisen und Urlaub in Georgien zu machen.</p>
+                            <p class="text-sm" data-key="transport-info">Aus Berlin fliegt man Mittwoch und Samstag
+                                direkt nach Tiflis (ca. 4 Stunden). Wir empfehlen von Mittwoch zu Mittwoch anzureisen
+                                und Urlaub in Georgien zu machen.</p>
                         </div>
                         <div>
                             <p class="font-medium" data-key="transfer">Transfer:</p>
-                            <p class="text-sm" data-key="transfer-info">Von Tiflis fahren wir alle gemeinsam zur Hochzeitslocation mit einem von uns organisierten Transfer.</p>
+                            <p class="text-sm" data-key="transfer-info">Von Tiflis fahren wir alle gemeinsam zur
+                                Hochzeitslocation mit einem von uns organisierten Transfer.</p>
                         </div>
                         <div>
                             <p class="font-medium" data-key="visa-info">Visa:</p>
@@ -497,13 +668,6 @@
                 <!-- Accommodation -->
                 <div class="rounded-lg p-8 shadow-lg"
                     style="background: linear-gradient(135deg, var(--beige), var(--warm-silver));">
-                    <div class="w-12 h-12 mb-4 rounded-full flex items-center justify-center"
-                        style="background: linear-gradient(135deg, var(--sage-green), var(--forest-green));">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
-                        </svg>
-                    </div>
                     <h3 class="font-serif text-xl mb-4 font-medium" style="color: var(--sage-green);"
                         data-key="accommodation">Unterkunft</h3>
                     <div class="space-y-3" style="color: var(--charcoal);">
@@ -528,42 +692,92 @@
 
 
     <!-- RSVP Section -->
-    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-lavender));">
+    <section class="py-16 px-4" style="background: linear-gradient(135deg, var(--dusty-rose), var(--soft-orange));">
         <div class="max-w-2xl mx-auto text-center">
-            <h2 class="font-script text-5xl mb-8 text-white font-medium" data-key="rsvp-title">Bitte bestätige deine
+            <h2 class="font-elegant text-2xl sm:text-3xl md:text-4xl lg:text-6xl mb-8 text-white font-bold px-4"
+                data-key="rsvp-title">Bitte bestätige deine
                 Teilnahme</h2>
-            <p class="text-xl text-white mb-8 font-medium" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);" data-key="rsvp-text">Wir freuen uns auf deine Antwort bis zum
+            <p class="text-xl text-white mb-8 font-medium" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"
+                data-key="rsvp-text">Wir freuen uns auf deine Antwort bis zum
                 1. August 2026</p>
 
-            <div class="rounded-2xl p-8 shadow-2xl wedding-card"
+            <div class="rounded-2xl p-6 sm:p-8 shadow-2xl wedding-card hover-lift transition-all duration-300"
                 style="background: linear-gradient(135deg, var(--cream), var(--light-beige)); border: 2px solid rgba(212, 165, 165, 0.3);">
-                <form class="space-y-6">
-                    <input type="text" placeholder="Dein Name" data-placeholder="your-name"
-                        class="w-full p-4 rounded-xl transition-all font-medium text-lg"
-                        style="border: 2px solid var(--dusty-rose); background-color: white; color: var(--charcoal);"
-                        onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
-                        onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
-                    <input type="email" placeholder="E-Mail" data-placeholder="email"
-                        class="w-full p-4 rounded-xl transition-all font-medium text-lg"
-                        style="border: 2px solid var(--dusty-rose); background-color: white; color: var(--charcoal);"
-                        onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
-                        onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
-                    <select class="w-full p-4 rounded-xl transition-all font-medium text-lg"
-                        style="border: 2px solid var(--dusty-rose); background-color: white; color: var(--charcoal);"
-                        onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
-                        onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
-                        <option data-key="attending-yes">Ich komme gerne</option>
-                        <option data-key="attending-no">Ich kann leider nicht kommen</option>
-                    </select>
-                    <textarea placeholder="Nachricht (optional)" data-placeholder="message-optional" rows="4"
-                        class="w-full p-4 rounded-xl transition-all font-medium"
-                        style="border: 2px solid var(--dusty-rose); background-color: white; color: var(--charcoal);"
-                        onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
-                        onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'"></textarea>
+                <form class="space-y-6" id="rsvp-form">
+                    <!-- Name Field -->
+                    <div class="relative">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--georgian-wine);"
+                            data-key="your-name">Dein Name</label>
+                        <input type="text" name="name" required placeholder="Dein vollständiger Name"
+                            data-placeholder="your-name"
+                            class="w-full p-4 rounded-xl transition-all font-medium text-lg border-2 focus:outline-none"
+                            style="border-color: var(--dusty-rose); background-color: white; color: var(--charcoal);"
+                            onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
+                            onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
+                    </div>
+
+                    <!-- Email Field -->
+                    <div class="relative">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--georgian-wine);"
+                            data-key="email">E-Mail</label>
+                        <input type="email" name="email" required placeholder="deine@email.com" data-placeholder="email"
+                            class="w-full p-4 rounded-xl transition-all font-medium text-lg border-2 focus:outline-none"
+                            style="border-color: var(--dusty-rose); background-color: white; color: var(--charcoal);"
+                            onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
+                            onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
+                    </div>
+
+                    <!-- Attendance Field -->
+                    <div class="relative">
+                        <label class="block text-sm font-medium mb-2"
+                            style="color: var(--georgian-wine);">Teilnahme</label>
+                        <select name="attending" required
+                            class="w-full p-4 rounded-xl transition-all font-medium text-lg border-2 focus:outline-none"
+                            style="border-color: var(--dusty-rose); background-color: white; color: var(--charcoal);"
+                            onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
+                            onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'">
+                            <option value="">Bitte wählen...</option>
+                            <option value="yes" data-key="attending-yes">Ich komme gerne</option>
+                            <option value="no" data-key="attending-no">Ich kann leider nicht kommen</option>
+                        </select>
+                    </div>
+
+                    <!-- Message Field -->
+                    <div class="relative">
+                        <label class="block text-sm font-medium mb-2" style="color: var(--georgian-wine);"
+                            data-key="message-optional">Nachricht (optional)</label>
+                        <textarea name="message" rows="4" placeholder="Deine Nachricht an uns..."
+                            data-placeholder="message-optional"
+                            class="w-full p-4 rounded-xl transition-all font-medium resize-none border-2 focus:outline-none"
+                            style="border-color: var(--dusty-rose); background-color: white; color: var(--charcoal);"
+                            onfocus="this.style.borderColor='var(--georgian-wine)'; this.style.boxShadow='0 0 0 3px rgba(139, 75, 107, 0.2)'"
+                            onblur="this.style.borderColor='var(--dusty-rose)'; this.style.boxShadow='none'"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
                     <button type="submit"
-                        class="w-full text-white py-4 rounded-xl transition-all font-bold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 animate-romantic-glow"
+                        class="w-full text-white py-4 rounded-xl transition-all font-bold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         style="background: linear-gradient(135deg, var(--georgian-wine), var(--dusty-rose));"
-                        data-key="send-rsvp">Antwort senden</button>
+                        data-key="send-rsvp">
+                        <span class="flex items-center justify-center">
+                            <svg class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white loading-spinner"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            <span class="button-text">Antwort senden</span>
+                        </span>
+                    </button>
+
+                    <!-- Configuration Info -->
+                    <div class="text-center mt-4">
+                        <p class="text-xs opacity-60" style="color: var(--charcoal);">
+                            <span data-key="rsvp-secure">Deine Daten werden sicher übertragen</span> 🔒
+                        </p>
+                    </div>
                 </form>
             </div>
         </div>

@@ -7,6 +7,17 @@ let currentLang = 'de';
 // Wedding date
 const weddingDate = new Date('2026-09-19T15:00:00');
 
+// RSVP Configuration
+const RSVP_CONFIG = {
+    // Set your webhook URL here (e.g., Netlify Forms, Formspree, etc.)
+    submitUrl: 'https://webhook.site/ca946e5b-edf7-46ae-bab9-d5c7f7e867fd', // Leave empty to use default alert behavior
+    // Alternative: 'https://formspree.io/f/your-form-id'
+    // Alternative: 'https://your-webhook-url.com/rsvp'
+    method: 'POST'
+};
+
+// toggleCard function is now defined in HTML head for immediate availability
+
 // Load translations from JSON files
 async function loadTranslations() {
     try {
@@ -18,6 +29,8 @@ async function loadTranslations() {
         translations.de = await deResponse.json();
         translations.ru = await ruResponse.json();
         console.log('Translations loaded successfully');
+        console.log('DE wine-joy-translation:', translations.de['wine-joy-translation']);
+        console.log('RU wine-joy-translation:', translations.ru['wine-joy-translation']);
     } catch (error) {
         console.error('Error loading translations:', error);
         // Fallback translations
@@ -76,10 +89,56 @@ document.addEventListener('DOMContentLoaded', async function () {
         form.addEventListener('submit', handleRSVP);
         console.log('RSVP form handler set up');
     }
-    
+
     // Start portrait flip animation
     startPortraitFlip();
+
+    // Initialize background images
+    initBackgroundImages();
+
+    // Test if cards are clickable
+    console.log('Event cards ready with onclick handlers');
+    console.log('toggleCard function available:', typeof window.toggleCard);
 });
+
+// Check for image format and set background
+function setBackgroundImage(element, baseName) {
+    const formats = ['jpg', 'png'];
+
+    // Try JPG first, then PNG
+    const img = new Image();
+    img.onload = function () {
+        element.style.backgroundImage = `url('assets/images/${baseName}.jpg')`;
+    };
+    img.onerror = function () {
+        // If JPG fails, try PNG
+        const imgPng = new Image();
+        imgPng.onload = function () {
+            element.style.backgroundImage = `url('assets/images/${baseName}.png')`;
+        };
+        imgPng.onerror = function () {
+            console.log(`Neither ${baseName}.jpg nor ${baseName}.png found`);
+        };
+        imgPng.src = `assets/images/${baseName}.png`;
+    };
+    img.src = `assets/images/${baseName}.jpg`;
+}
+
+// Initialize background images
+function initBackgroundImages() {
+    const ceremonyBg = document.querySelector('.ceremony-bg');
+    const receptionBg = document.querySelector('.reception-bg');
+
+    if (ceremonyBg) {
+        setBackgroundImage(ceremonyBg, 'ceremony-bg');
+    }
+
+    if (receptionBg) {
+        setBackgroundImage(receptionBg, 'reception-bg');
+    }
+}
+
+// Function is now defined at the top of the file
 
 function updateCountdown() {
     const now = new Date().getTime();
@@ -151,6 +210,9 @@ function switchLanguage(lang) {
         const key = element.getAttribute('data-key');
         if (translations[lang] && translations[lang][key]) {
             element.textContent = translations[lang][key];
+            console.log(`Updated ${key} to: ${translations[lang][key]}`);
+        } else {
+            console.log(`Missing translation for key: ${key} in language: ${lang}`);
         }
     });
 
@@ -164,54 +226,163 @@ function switchLanguage(lang) {
     });
 }
 
-function handleRSVP(event) {
+async function handleRSVP(event) {
     event.preventDefault();
 
+    const form = event.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+
     // Get form data
-    const name = event.target.querySelector('input[type="text"]').value;
-    const email = event.target.querySelector('input[type="email"]').value;
-    const attending = event.target.querySelector('select').value;
-    const message = event.target.querySelector('textarea').value;
+    const formData = {
+        name: form.querySelector('input[type="text"]').value.trim(),
+        email: form.querySelector('input[type="email"]').value.trim(),
+        attending: form.querySelector('select').value,
+        message: form.querySelector('textarea').value.trim(),
+        language: currentLang,
+        timestamp: new Date().toISOString()
+    };
 
-    // Here you would typically send this data to a server
-    // For now, we'll just show an alert
-    const thankYouMessage = currentLang === 'de'
-        ? 'Vielen Dank für Ihre Antwort!'
-        : 'Спасибо за ваш ответ!';
+    // Validation
+    if (!formData.name || !formData.email) {
+        const errorMessage = currentLang === 'de' 
+            ? 'Bitte fülle alle Pflichtfelder aus.' 
+            : 'Пожалуйста, заполните все обязательные поля.';
+        showNotification(errorMessage, 'error');
+        return;
+    }
 
-    alert(thankYouMessage);
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+        const errorMessage = currentLang === 'de' 
+            ? 'Bitte gib eine gültige E-Mail-Adresse ein.' 
+            : 'Пожалуйста, введите действительный адрес электронной почты.';
+        showNotification(errorMessage, 'error');
+        return;
+    }
 
-    // Reset form
-    event.target.reset();
+    // Show loading state
+    submitButton.disabled = true;
+    const loadingText = currentLang === 'de' ? 'Wird gesendet...' : 'Отправляется...';
+    submitButton.textContent = loadingText;
+    submitButton.style.opacity = '0.7';
 
-    // Log the data (remove in production)
-    console.log('RSVP Data:', { name, email, attending, message, language: currentLang });
+    try {
+        if (RSVP_CONFIG.submitUrl) {
+            // Send to configured URL
+            const response = await fetch(RSVP_CONFIG.submitUrl, {
+                method: RSVP_CONFIG.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const successMessage = currentLang === 'de'
+                ? 'Vielen Dank für deine Antwort! Wir haben sie erhalten.'
+                : 'Спасибо за ваш ответ! Мы получили его.';
+            showNotification(successMessage, 'success');
+            
+            // Reset form on success
+            form.reset();
+        } else {
+            // Fallback: Show data in a nice format
+            const thankYouMessage = currentLang === 'de'
+                ? `Vielen Dank, ${formData.name}! Deine Antwort wurde erfasst.\n\nTeilnahme: ${formData.attending}\nE-Mail: ${formData.email}${formData.message ? '\nNachricht: ' + formData.message : ''}\n\nBitte konfiguriere RSVP_CONFIG.submitUrl im JavaScript für automatische Übermittlung.`
+                : `Спасибо, ${formData.name}! Ваш ответ был записан.\n\nУчастие: ${formData.attending}\nE-mail: ${formData.email}${formData.message ? '\nСообщение: ' + formData.message : ''}\n\nПожалуйста, настройте RSVP_CONFIG.submitUrl в JavaScript для автоматической отправки.`;
+            
+            showNotification(thankYouMessage, 'info');
+        }
+
+        console.log('RSVP Data:', formData);
+
+    } catch (error) {
+        console.error('RSVP submission error:', error);
+        const errorMessage = currentLang === 'de'
+            ? 'Es gab ein Problem beim Senden deiner Antwort. Bitte versuche es später erneut.'
+            : 'Произошла ошибка при отправке вашего ответа. Пожалуйста, попробуйте позже.';
+        showNotification(errorMessage, 'error');
+    } finally {
+        // Reset button state
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+        submitButton.style.opacity = '1';
+    }
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.rsvp-notification');
+    existingNotifications.forEach(n => n.remove());
+
+    const notification = document.createElement('div');
+    notification.className = 'rsvp-notification fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md';
+    
+    const colors = {
+        success: 'bg-green-500 text-white',
+        error: 'bg-red-500 text-white',
+        info: 'bg-blue-500 text-white'
+    };
+    
+    notification.className += ` ${colors[type] || colors.info}`;
+    notification.style.cssText = `
+        animation: slideInRight 0.3s ease-out;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.4;
+        white-space: pre-line;
+    `;
+    
+    notification.textContent = message;
+    
+    // Add close button
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '×';
+    closeBtn.className = 'ml-2 text-xl font-bold opacity-70 hover:opacity-100';
+    closeBtn.onclick = () => notification.remove();
+    notification.appendChild(closeBtn);
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
 }
 
 // Portrait flip animation
 function startPortraitFlip() {
     console.log('Initializing portrait flip...');
-    
+
     // Wait a bit for DOM to be fully ready
     setTimeout(() => {
         const fabianFlip = document.getElementById('fabian-flip');
         const anastasiaFlip = document.getElementById('anastasia-flip');
-        
+
         console.log('Fabian flip element:', fabianFlip);
         console.log('Anastasia flip element:', anastasiaFlip);
-        
+
         if (!fabianFlip || !anastasiaFlip) {
             console.error('Portrait flip elements not found!');
             return;
         }
-        
+
         let isFlipped = false;
-        
+
         function flipPortraits() {
             isFlipped = !isFlipped;
-            
+
             console.log('Flipping portraits to:', isFlipped ? 'Adult' : 'Child');
-            
+
             if (isFlipped) {
                 fabianFlip.style.transform = 'rotateY(180deg)';
                 anastasiaFlip.style.transform = 'rotateY(180deg)';
@@ -220,29 +391,29 @@ function startPortraitFlip() {
                 anastasiaFlip.style.transform = 'rotateY(0deg)';
             }
         }
-        
+
         // Test flip immediately
         console.log('Testing flip in 2 seconds...');
         setTimeout(() => {
             flipPortraits();
         }, 2000);
-        
+
         // Flip every 5 seconds
         setInterval(flipPortraits, 5000);
-        
+
         // Add click handlers for manual flip
         fabianFlip.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Fabian clicked!');
             flipPortraits();
         });
-        
+
         anastasiaFlip.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Anastasia clicked!');
             flipPortraits();
         });
-        
+
         console.log('Portrait flip animation started successfully!');
     }, 1000);
 }
