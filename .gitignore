@@ -55,3 +55,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Email templates (local development only)
+email-templates/
+EMAIL_SETUP.md

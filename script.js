@@ -9,10 +9,11 @@ const weddingDate = new Date('2026-09-19T15:00:00');
 
 // RSVP Configuration
 const RSVP_CONFIG = {
-    // Set your webhook URL here (e.g., Netlify Forms, Formspree, etc.)
-    submitUrl: 'https://webhook.site/ca946e5b-edf7-46ae-bab9-d5c7f7e867fd', // Leave empty to use default alert behavior
-    // Alternative: 'https://formspree.io/f/your-form-id'
-    // Alternative: 'https://your-webhook-url.com/rsvp'
+    // EmailJS configuration for sending emails
+    emailJSServiceId: 'service_jcbhohw', // Your EmailJS service ID
+    emailJSTemplateId: 'template_7wj01li', // Template sends all RSVPs to organizers
+    emailJSUserId: 'YemPicATBzzyZ0TYD', // Your EmailJS public key
+    recipientEmail: 'auron212@gmx.net',
     method: 'POST'
 };
 
@@ -99,7 +100,146 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Test if cards are clickable
     console.log('Event cards ready with onclick handlers');
     console.log('toggleCard function available:', typeof window.toggleCard);
+
+    // Initialize map fallback detection
+    initMapFallback();
+
+    // Initialize date fields
+    initDateFields();
 });
+
+// Map fallback functionality
+function initMapFallback() {
+    const iframe = document.querySelector('iframe[title="Kvareli Lake Resort Location"]');
+    const fallback = document.getElementById('map-fallback');
+    
+    if (iframe && fallback) {
+        // Show fallback if iframe fails to load after 5 seconds
+        setTimeout(() => {
+            iframe.onerror = () => {
+                iframe.style.display = 'none';
+                fallback.style.display = 'flex';
+            };
+        }, 5000);
+    }
+}
+
+// Initialize date fields with German format (dd.mm.yyyy)
+function initDateFields() {
+    const arrivalDisplay = document.querySelector('input[name="arrival-date-display"]');
+    const departureDisplay = document.querySelector('input[name="departure-date-display"]');
+    const arrivalHidden = document.querySelector('input[name="arrival-date"]');
+    const departureHidden = document.querySelector('input[name="departure-date"]');
+    
+    if (arrivalDisplay && departureDisplay && arrivalHidden && departureHidden) {
+        // Add input formatting and validation
+        [arrivalDisplay, departureDisplay].forEach(input => {
+            // Format input as user types
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                
+                // Add dots automatically
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '.' + value.substring(2);
+                }
+                if (value.length >= 5) {
+                    value = value.substring(0, 5) + '.' + value.substring(5, 9);
+                }
+                
+                e.target.value = value;
+            });
+            
+            // Validate and convert on blur
+            input.addEventListener('blur', function(e) {
+                const germanDate = e.target.value;
+                const isValid = validateAndConvertGermanDate(germanDate, e.target);
+                
+                if (isValid && e.target === arrivalDisplay) {
+                    // Auto-adjust departure if needed
+                    autoAdjustDeparture();
+                }
+            });
+        });
+        
+        // Auto-adjust departure date when arrival changes
+        function autoAdjustDeparture() {
+            const arrivalISO = arrivalHidden.value;
+            const departureISO = departureHidden.value;
+            
+            if (arrivalISO) {
+                const arrivalDate = new Date(arrivalISO);
+                const departureDate = new Date(departureISO);
+                
+                // If departure is before or same as arrival, set it to next day
+                if (!departureISO || departureDate <= arrivalDate) {
+                    const nextDay = new Date(arrivalDate);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    
+                    const newDepartureISO = nextDay.toISOString().split('T')[0];
+                    const newDepartureGerman = formatDateToGerman(newDepartureISO);
+                    
+                    departureHidden.value = newDepartureISO;
+                    departureDisplay.value = newDepartureGerman;
+                }
+            }
+        }
+    }
+}
+
+// Validate and convert German date format (dd.mm.yyyy) to ISO (yyyy-mm-dd)
+function validateAndConvertGermanDate(germanDate, inputElement) {
+    const datePattern = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    const match = germanDate.match(datePattern);
+    
+    if (!match) {
+        if (germanDate.length > 0) {
+            inputElement.style.borderColor = '#ef4444'; // Red border for invalid
+            return false;
+        }
+        return true; // Empty is okay
+    }
+    
+    const day = parseInt(match[1]);
+    const month = parseInt(match[2]);
+    const year = parseInt(match[3]);
+    
+    // Basic validation
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2026 || year > 2027) {
+        inputElement.style.borderColor = '#ef4444'; // Red border
+        return false;
+    }
+    
+    // Create date and validate it exists
+    const date = new Date(year, month - 1, day);
+    if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+        inputElement.style.borderColor = '#ef4444'; // Red border
+        return false;
+    }
+    
+    // Convert to ISO format and store in hidden field
+    const isoDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    
+    // Find corresponding hidden field
+    const hiddenFieldName = inputElement.name.replace('-display', '');
+    const hiddenField = document.querySelector(`input[name="${hiddenFieldName}"]`);
+    if (hiddenField) {
+        hiddenField.value = isoDate;
+    }
+    
+    // Reset border color
+    inputElement.style.borderColor = 'var(--dusty-rose)';
+    return true;
+}
+
+// Convert ISO date (yyyy-mm-dd) to German format (dd.mm.yyyy)
+function formatDateToGerman(isoDate) {
+    if (!isoDate) return '';
+    
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return '';
+    
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+}
 
 // Check for image format and set background
 function setBackgroundImage(element, baseName) {
@@ -233,18 +373,23 @@ async function handleRSVP(event) {
     const submitButton = form.querySelector('button[type="submit"]');
     const originalButtonText = submitButton.textContent;
 
-    // Get form data
+    // Get all form data including new fields
     const formData = {
-        name: form.querySelector('input[type="text"]').value.trim(),
-        email: form.querySelector('input[type="email"]').value.trim(),
-        attending: form.querySelector('select').value,
-        message: form.querySelector('textarea').value.trim(),
+        name: form.querySelector('input[name="name"]').value.trim(),
+        email: form.querySelector('input[name="email"]').value.trim(),
+        attending: form.querySelector('select[name="attending"]').value,
+        message: form.querySelector('textarea[name="message"]').value.trim(),
+        alcohol: Array.from(form.querySelectorAll('input[name="alcohol[]"]:checked')).map(cb => cb.value),
+        alcoholOther: form.querySelector('input[name="alcohol-other"]').value.trim(),
+        childcare: form.querySelector('input[name="childcare"]:checked')?.value || '',
+        arrivalDate: form.querySelector('input[name="arrival-date"]').value,
+        departureDate: form.querySelector('input[name="departure-date"]').value,
         language: currentLang,
         timestamp: new Date().toISOString()
     };
 
     // Validation
-    if (!formData.name || !formData.email) {
+    if (!formData.name || !formData.email || !formData.attending) {
         const errorMessage = currentLang === 'de' 
             ? 'Bitte fülle alle Pflichtfelder aus.' 
             : 'Пожалуйста, заполните все обязательные поля.';
@@ -269,43 +414,59 @@ async function handleRSVP(event) {
     submitButton.style.opacity = '0.7';
 
     try {
-        if (RSVP_CONFIG.submitUrl) {
-            // Send to configured URL
-            const response = await fetch(RSVP_CONFIG.submitUrl, {
-                method: RSVP_CONFIG.method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
+        // Prepare email content
+        const emailContent = `
+Neue RSVP-Anmeldung für die Hochzeit:
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+Name: ${formData.name}
+E-Mail: ${formData.email}
+Teilnahme: ${formData.attending}
+Sprache: ${formData.language}
 
-            const successMessage = currentLang === 'de'
-                ? 'Vielen Dank für deine Antwort! Wir haben sie erhalten.'
-                : 'Спасибо за ваш ответ! Мы получили его.';
-            showNotification(successMessage, 'success');
-            
-            // Reset form on success
-            form.reset();
-        } else {
-            // Fallback: Show data in a nice format
-            const thankYouMessage = currentLang === 'de'
-                ? `Vielen Dank, ${formData.name}! Deine Antwort wurde erfasst.\n\nTeilnahme: ${formData.attending}\nE-Mail: ${formData.email}${formData.message ? '\nNachricht: ' + formData.message : ''}\n\nBitte konfiguriere RSVP_CONFIG.submitUrl im JavaScript für automatische Übermittlung.`
-                : `Спасибо, ${formData.name}! Ваш ответ был записан.\n\nУчастие: ${formData.attending}\nE-mail: ${formData.email}${formData.message ? '\nСообщение: ' + formData.message : ''}\n\nПожалуйста, настройте RSVP_CONFIG.submitUrl в JavaScript для автоматической отправки.`;
-            
-            showNotification(thankYouMessage, 'info');
-        }
+Alkoholpräferenzen: ${formData.alcohol.join(', ')}${formData.alcoholOther ? ` (Andere: ${formData.alcoholOther})` : ''}
+Kinderbetreuung: ${formData.childcare || 'Nicht angegeben'}
+Ankunft: ${formData.arrivalDate || 'Nicht angegeben'}
+Abreise: ${formData.departureDate || 'Nicht angegeben'}
 
-        console.log('RSVP Data:', formData);
+Nachricht: ${formData.message || 'Keine Nachricht'}
+
+Zeitstempel: ${formData.timestamp}
+        `;
+
+        // Prepare parameters for organizer notification
+        const organizerParams = {
+            from_name: formData.name,
+            from_email: formData.email,
+            attending_status: formData.attending,
+            language: formData.language,
+            alcohol_preferences: formData.alcohol.join(', ') || 'Keine Angabe',
+            alcohol_other: formData.alcoholOther || '',
+            childcare_needed: formData.childcare || 'Nicht angegeben',
+            arrival_date: formData.arrivalDate || 'Nicht angegeben',
+            departure_date: formData.departureDate || 'Nicht angegeben',
+            message: formData.message || '',
+            timestamp: formData.timestamp,
+            reply_to: formData.email
+        };
+
+        // Send notification email to organizers using existing template
+        await emailjs.send(RSVP_CONFIG.emailJSServiceId, RSVP_CONFIG.emailJSTemplateId, organizerParams);
+
+        const successMessage = currentLang === 'de'
+            ? 'Vielen Dank für deine Anmeldung! Wir haben sie erhalten.'
+            : 'Спасибо за регистрацию! Мы получили её.';
+        showNotification(successMessage, 'success');
+        
+        // Reset form on success
+        form.reset();
+
+        console.log('RSVP Data sent:', formData);
 
     } catch (error) {
         console.error('RSVP submission error:', error);
         const errorMessage = currentLang === 'de'
-            ? 'Es gab ein Problem beim Senden deiner Antwort. Bitte versuche es später erneut.'
-            : 'Произошла ошибка при отправке вашего ответа. Пожалуйста, попробуйте позже.';
+            ? 'Es gab ein Problem beim Senden deiner Anmeldung. Bitte versuche es später erneut oder kontaktiere uns direkt.'
+            : 'Произошла ошибка при отправке регистрации. Пожалуйста, попробуйте позже или свяжитесь с нами напрямую.';
         showNotification(errorMessage, 'error');
     } finally {
         // Reset button state
